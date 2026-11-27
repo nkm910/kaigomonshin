@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>主治医意見書問診票｜小嶋診療所</title>
+<meta name="theme-color" content="#2f6f62">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="意見書問診票">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<style>
+:root{
+  --ink:#1f2a28; --sub:#5d6b68; --line:#d6dedb; --bg:#f4f6f4; --card:#fff;
+  --accent:#2f6f62; --accent-soft:#e3efeb; --warn:#a8442f;
+  --font:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","YuGothic","Meiryo","Noto Sans CJK JP","Noto Sans JP",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);font-size:17px;line-height:1.6;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+
+/* ===== ヘッダー ===== */
+.topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 8px) 16px 8px}
+.topbar-in{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{flex:1;min-width:200px}
+.brand b{display:block;font-size:19px;letter-spacing:.04em}
+.brand small{color:var(--sub);font-size:13px}
+.tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px}
+.tabs button{border:0;background:transparent;padding:8px 16px;border-radius:8px;font-size:16px;cursor:pointer;color:var(--sub)}
+.tabs button.on{background:#fff;color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.actions{display:flex;gap:8px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 16px;cursor:pointer;font-size:16px;white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.btn.ghost{color:var(--warn)}
+
+/* ===== 入力画面 ===== */
+main{max-width:860px;margin:0 auto;padding:16px 16px 120px}
+.intro{background:var(--accent-soft);border-radius:12px;padding:14px 18px;margin-bottom:16px;font-size:15px}
+.intro p{margin:0 0 4px}
+.card{background:var(--card);border-radius:14px;padding:18px 20px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.05);border:1px solid #e7ece9}
+.card h2{font-size:18px;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+.card h2 .no{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-size:15px;flex:none}
+.card h2 .tag{font-size:14px;color:var(--sub);font-weight:400}
+.hint{font-size:14px;color:var(--sub);margin:-6px 0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.grid .full{grid-column:1/-1}
+@media (max-width:620px){.grid{grid-template-columns:1fr}}
+label.f{display:block}
+label.f > span{display:block;font-size:14px;color:var(--sub);margin-bottom:4px}
+input[type=text],input[type=tel],input[type=date],input[type=number],select,textarea{
+  width:100%;border:1px solid #c9d3cf;border-radius:10px;padding:11px 12px;background:#fff;min-height:48px;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,#777 50%),linear-gradient(135deg,#777 50%,transparent 50%);background-position:calc(100% - 18px) 21px,calc(100% - 13px) 21px;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
+textarea{min-height:110px;resize:vertical;line-height:1.6}
+input:focus,select:focus,textarea:focus{outline:3px solid #b8d8cf;border-color:var(--accent)}
+.bday{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:8px}
+.bday-out{font-size:14px;color:var(--accent);margin-top:4px;min-height:1.4em}
+
+.q{padding:12px 0;border-top:1px dashed var(--line)}
+.q:first-of-type{border-top:0;padding-top:0}
+.qt{margin-bottom:8px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{border:1.5px solid #c9d3cf;background:#fff;border-radius:999px;padding:9px 18px;min-height:46px;cursor:pointer;font-size:16px;transition:background .12s}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.seg button.on::before{content:"✓ "}
+.row-lbl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0}
+.row-lbl > b{min-width:96px;font-weight:600}
+.sub{margin-top:10px;padding-left:12px;border-left:3px solid var(--accent-soft)}
+.hide{display:none!important}
+
+.bottom-cta{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:15}
+.bottom-cta .in{max-width:860px;margin:0 auto;display:flex;gap:10px;justify-content:flex-end;align-items:center}
+.bottom-cta .saved{flex:1;font-size:13px;color:var(--sub)}
+
+/* ===== プレビュー ===== */
+#previewView{padding:16px}
+#previewView.offscreen{position:absolute;left:-10000px;top:0;visibility:hidden}
+.pv-note{max-width:860px;margin:0 auto 12px;font-size:14px;color:var(--sub)}
+.pv-wrap{margin:0 auto;transform-origin:top left}
+.pv-holder{margin:0 auto;overflow:hidden}
+
+/* ===== 印刷用シート（原本の書式） ===== */
+.sheet{width:210mm;height:297mm;padding:10mm;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.18);color:#000}
+.pg{width:190mm;height:277mm;padding:2mm 6mm 0;font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","YuGothic","Meiryo","Noto Sans CJK JP",sans-serif;font-size:10pt;line-height:1.55;position:relative;overflow:hidden}
+.pg .title{text-align:center;font-size:11.5pt;letter-spacing:.06em;margin:0 0 1.5mm}
+.hd{border:.3mm solid #000;padding:.8mm 2mm 1mm}
+.hd .r{display:flex;min-height:5.8mm;align-items:baseline}
+.hd .c{display:flex;align-items:baseline;overflow:hidden;white-space:nowrap}
+.hd .l{flex:none}
+.v{font-size:10.5pt;padding-left:1.5mm;overflow:hidden;text-overflow:clip;white-space:nowrap}
+.hd hr{border:0;border-top:.25mm solid #000;margin:.6mm -2mm .6mm}
+.ymd{display:inline-flex;gap:0}
+.ymd span.n{display:inline-block;text-align:center}
+.qs{margin-top:4mm;padding-left:1mm}
+.qs .qi{display:flex;gap:1.5mm}
+.qs .num{flex:none;width:5mm}
+.qs .blk{margin-left:6.5mm}
+.qs .box{margin-left:6.5mm;font-size:10pt;white-space:pre-wrap;word-break:break-all;overflow:hidden;color:#000}
+.qs .pad{height:1.5mm}
+.o{display:inline-block;padding:0 1.1mm;margin:0;border:.28mm solid transparent;border-radius:50%;line-height:1.25}
+.o.on{border-color:#000}
+.mk{display:inline-block;min-width:6mm;text-align:center;font-weight:700}
+.dash{border:.25mm dashed #000;padding:.6mm 2mm;margin:.5mm 0 .5mm 6.5mm}
+.fillin{display:inline-block;border-bottom:none;padding:0 1mm}
+
+@media print{
+  @page{size:A4 portrait;margin:10mm}
+  html,body{background:#fff!important}
+  .topbar,.bottom-cta,#inputView,.pv-note{display:none!important}
+  #previewView,#previewView.offscreen{position:static!important;visibility:visible!important;padding:0!important}
+  .pv-holder{width:auto!important;height:auto!important;overflow:visible!important}
+  .pv-wrap{transform:none!important}
+  .sheet{width:190mm;height:277mm;padding:0;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><b>主治医意見書 問診票</b><small>小嶋診療所　ご家族・ご本人記入用</small></div>
+    <div class="tabs" role="tablist">
+      <button id="tabInput" class="on" type="button">入力</button>
+      <button id="tabPreview" type="button">印刷イメージ</button>
+    </div>
+    <div class="actions">
+      <button class="btn primary" type="button" id="btnPrint">印刷・PDF</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== 入力画面 ===================== -->
+<main id="inputView">
+  <div class="intro">
+    <p>介護保険の「主治医意見書」作成のための問診票です。わかる範囲でご記入ください。</p>
+    <p>入力内容はこの端末の中だけに保存され、外部には送信されません。記入後は「印刷・PDF」から印刷またはPDF保存してください。</p>
+  </div>
+
+  <section class="card">
+    <h2>ご本人・記入者について</h2>
+    <div class="grid">
+      <label class="f"><span>記入日</span><input type="date" data-k="kinyubi"></label>
+      <div></div>
+      <label class="f"><span>記入者のお名前</span><input type="text" data-k="kinyusha" autocomplete="name"></label>
+      <label class="f"><span>ご本人との続柄（例：長女、妻、本人）</span><input type="text" data-k="zokugara"></label>
+      <label class="f"><span>患者さんのお名前</span><input type="text" data-k="shimei"></label>
+      <label class="f"><span>フリガナ</span><input type="text" data-k="furigana"></label>
+      <div class="full">
+        <label class="f"><span>生年月日</span></label>
+        <div class="bday">
+          <select data-k="bdEra" aria-label="元号">
+            <option value="">元号</option><option>大正</option><option>昭和</option><option>平成</option><option>令和</option>
+          </select>
+          <select data-k="bdY" aria-label="年"></select>
+          <select data-k="bdM" aria-label="月"></select>
+          <select data-k="bdD" aria-label="日"></select>
+        </div>
+        <div class="bday-out" id="bdayOut"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>緊急連絡先<span class="tag">ご本人以外で必ず連絡がとれる方</span></h2>
+    <div class="grid">
+      <label class="f"><span>お名前</span><input type="text" data-k="kinkyuName"></label>
+      <label class="f"><span>電話番号（携帯電話）</span><input type="tel" data-k="kinkyuTel" inputmode="tel"></label>
+      <label class="f full"><span>住所</span><input type="text" data-k="kinkyuAddr"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>介護保険について</h2>
+    <div class="q">
+      <div class="qt">現在の介護度</div>
+      <div class="seg" data-k="kaigodo" data-mode="single">
+        <button type="button" data-v="要支援1">要支援1</button><button type="button" data-v="要支援2">要支援2</button>
+        <button type="button" data-v="要介護1">要介護1</button><button type="button" data-v="要介護2">要介護2</button>
+        <button type="button" data-v="要介護3">要介護3</button><button type="button" data-v="要介護4">要介護4</button>
+        <button type="button" data-v="要介護5">要介護5</button>
+        <button type="button" data-v="申請中">申請中・未認定</button><button type="button" data-v="不明">わからない</button>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <label class="f"><span>事業所名（居宅介護支援事業所など）</span><input type="text" data-k="jigyosho"></label>
+      <label class="f"><span>ケアマネージャーの氏名</span><input type="text" data-k="caremane"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="no">1</span>現在利用中の介護サービス</h2>
+    <p class="hint">例：デイサービス 週2回（月・木）、訪問介護 週3回、福祉用具レンタル（ベッド）など</p>
+    <textarea data-k="q1" rows="3"></textarea>
+  </section>
+
+  <section class="card">
+    <h2><span class="no">2</span>当診療所以外で通院中の病院・診療所</h2>
+    <p class="hint">病院名・病名・薬の内容・処置内容なども記入してください。お薬手帳の内容でも結構です。</p>
+    <textarea data-k="q2" rows="4"></textarea>
+  </section>
+
+  <section class="card">
+    <h2><span class="no">3</span>物忘れの状況</h2>
+    <p class="hint">該当するものをすべて選んでください。</p>
+    <div class="seg" data-k="q3" data-mode="multi">
+      <button type="button" data-v="妄想">妄想</button><button type="button" data-v="徘徊">徘徊</button>
+      <button type="button" data-v="暴言">暴言</button><button type="button" data-v="不潔行動">不潔行動</button>
+      <button type="button" data-v="火の不始末">火の不始末</button>
+    </div>
+    <label class="f" style="margin-top:12px"><span>その他困っていることがあれば、具体的に書いてください。</span>
+      <textarea data-k="q3other" rows="3"></textarea></label>
+  </section>
+
+  <section class="card">
+    <h2>身体の状況など</h2>
+    <div class="q"><div class="qt"><b>④</b> 足腰の筋力は弱っていますか？</div>
+      <div class="seg" data-k="q4" data-mode="single"><button type="button" data-v="はい">はい</button><button type="button" data-v="いいえ">いいえ</button></div></div>
+    <div class="q"><div class="qt"><b>⑤</b> 外出でバスや電車に一人で乗れますか？</div>
+      <div class="seg" data-k="q5" data-mode="single"><button type="button" data-v="はい">はい</button><button type="button" data-v="いいえ">いいえ</button></div></div>
+    <div class="q"><div class="qt"><b>⑥</b> 杖やシルバーカー、車椅子などはどこで使用していますか？</div>
+      <div class="row-lbl"><b>杖</b><div class="seg" data-k="q6tsue" data-mode="place"><button type="button" data-v="家の中">家の中</button><button type="button" data-v="外">外</button><button type="button" data-v="使用なし">使用なし</button></div></div>
+      <div class="row-lbl"><b>シルバーカー</b><div class="seg" data-k="q6silver" data-mode="place"><button type="button" data-v="家の中">家の中</button><button type="button" data-v="外">外</button><button type="button" data-v="使用なし">使用なし</button></div></div>
+      <div class="row-lbl"><b>車椅子</b><div class="seg" data-k="q6chair" data-mode="place"><button type="button" data-v="家の中">家の中</button><button type="button" data-v="外">外</button><button type="button" data-v="使用なし">使用なし</button></div></div>
+    </div>
+    <div class="q"><div class="qt"><b>⑦</b> 動きにくい関節、痛い関節はありますか？</div>
+      <div class="seg" data-k="q7" data-mode="single"><button type="button" data-v="はい">はい</button><button type="button" data-v="いいえ">いいえ</button></div>
+      <div class="sub" data-show="q7=はい"><label class="f"><span>どの関節が動きにくい・痛いか書いてください（例：右ひざ、両肩）</span><textarea data-k="q7text" rows="2"></textarea></label></div>
+    </div>
+    <div class="q"><div class="qt"><b>⑧</b> 転倒、骨折歴はありますか？</div>
+      <div class="seg" data-k="q8" data-mode="single"><button type="button" data-v="はい">はい</button><button type="button" data-v="いいえ">いいえ</button></div>
+      <div class="sub"><label class="f"><span>手術歴（例：令和5年 左大腿骨骨折で手術）</span><input type="text" data-k="q8ope"></label></div>
+    </div>
+    <div class="q"><div class="qt"><b>⑨</b> 視力はどうですか？</div>
+      <div class="seg" data-k="q9" data-mode="single"><button type="button" data-v="見える">見える</button><button type="button" data-v="見えない">見えない</button><button type="button" data-v="見えにくい">見えにくい</button></div>
+      <div class="sub grid" style="margin-top:10px">
+        <label class="f"><span>目の手術歴：病名（例：白内障）</span><input type="text" data-k="q9byomei"></label>
+        <label class="f"><span>いつ頃？</span><input type="text" data-k="q9itsu"></label>
+      </div>
+    </div>
+    <div class="q"><div class="qt"><b>⑩</b> 聴力はどうですか？</div>
+      <div class="seg" data-k="q10" data-mode="single"><button type="button" data-v="聴こえる">聴こえる</button><button type="button" data-v="聴こえにくい">聴こえにくい</button><button type="button" data-v="聴こえない">聴こえない</button></div>
+      <div class="sub" data-show="q10=聴こえにくい|聴こえない"><div class="row-lbl"><b>どちらの耳？</b><div class="seg" data-k="q10side" data-mode="multi"><button type="button" data-v="右">右</button><button type="button" data-v="左">左</button></div></div></div>
+      <div class="row-lbl" style="margin-top:8px"><div class="seg" data-k="q10aid" data-mode="multi"><button type="button" data-v="補聴器使用">補聴器を使用している</button></div></div>
+    </div>
+    <div class="q"><div class="qt"><b>⑪</b> 食事は十分にとれますか？</div>
+      <div class="seg" data-k="q11" data-mode="single"><button type="button" data-v="はい">はい</button><button type="button" data-v="いいえ">いいえ</button></div></div>
+    <div class="q"><div class="qt"><b>⑫</b> 食べるときにむせますか？</div>
+      <div class="seg" data-k="q12" data-mode="single"><button type="button" data-v="はい">はい</button><button type="button" data-v="いいえ">いいえ</button></div></div>
+    <div class="q"><div class="qt"><b>⑬</b> 利き手は？</div>
+      <div class="seg" data-k="q13" data-mode="single"><button type="button" data-v="右利き">右利き</button><button type="button" data-v="左利き">左利き</button></div></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="no">14</span>他に介護関連で気になること</h2>
+    <textarea data-k="q14" rows="4"></textarea>
+  </section>
+
+  <div style="text-align:center;margin-top:20px">
+    <button class="btn ghost" type="button" id="btnClear">入力内容をすべて消去する</button>
+  </div>
+</main>
+
+<!-- ===================== 印刷イメージ ===================== -->
+<div id="previewView" class="offscreen" aria-hidden="true">
+  <p class="pv-note">この画面がそのまま A4 1枚で印刷されます。文字が多い欄は自動で小さくなります。</p>
+  <div class="pv-holder" id="pvHolder"><div class="pv-wrap" id="pvWrap"><div class="sheet"><div class="pg" id="sheet"></div></div></div></div>
+</div>
+
+<div class="bottom-cta" id="bottomCta">
+  <div class="in">
+    <span class="saved" id="savedMsg">入力は自動保存されます</span>
+    <button class="btn" type="button" id="btnPreview2">印刷イメージを確認</button>
+    <button class="btn primary" type="button" id="btnPrint2">印刷・PDF</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "kojima-ikensho-monshin-v1";
+  var state = {};
+
+  /* ---------- 保存 ---------- */
+  function load(){ try{ var s = localStorage.getItem(KEY); if(s) state = JSON.parse(s) || {}; }catch(e){ state = {}; } }
+  var saveTimer=null;
+  function save(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){
+      try{ localStorage.setItem(KEY, JSON.stringify(state));
+        var d=new Date(); document.getElementById("savedMsg").textContent = "自動保存しました（"+d.getHours()+":"+("0"+d.getMinutes()).slice(-2)+"）";
+      }catch(e){ document.getElementById("savedMsg").textContent = "この環境では自動保存できません（印刷は可能です）"; }
+    },300);
+  }
+
+  /* ---------- 和暦 ---------- */
+  var ERAS = [ {n:"令和",s:new Date(2019,4,1),y:2018}, {n:"平成",s:new Date(1989,0,8),y:1988},
+               {n:"昭和",s:new Date(1926,11,25),y:1925}, {n:"大正",s:new Date(1912,6,30),y:1911}, {n:"明治",s:new Date(1868,0,1),y:1867} ];
+  var ERA_MAX = {"大正":15,"昭和":64,"平成":31,"令和":30};
+  function wareki(d){ for(var i=0;i<ERAS.length;i++){ if(d>=ERAS[i].s){ var y=d.getFullYear()-ERAS[i].y; return {era:ERAS[i].n, y:(y===1?"元":String(y))}; } } return {era:"",y:String(d.getFullYear())}; }
+  function eraOffset(n){ for(var i=0;i<ERAS.length;i++) if(ERAS[i].n===n) return ERAS[i].y; return null; }
+  function birthDate(){
+    var off = eraOffset(state.bdEra), y=parseInt(state.bdY,10), m=parseInt(state.bdM,10), d=parseInt(state.bdD,10);
+    if(off===null || !y) return null;
+    return {Y:off+y, m:m||null, d:d||null};
+  }
+  function kinyuDate(){ if(state.kinyubi){ var p=state.kinyubi.split("-"); return new Date(+p[0],+p[1]-1,+p[2]); } return null; }
+  function ageAt(b, ref){
+    if(!b || !b.m || !b.d) return null; ref = ref || new Date();
+    var a = ref.getFullYear()-b.Y; if(ref.getMonth()+1 < b.m || (ref.getMonth()+1===b.m && ref.getDate()<b.d)) a--; return a;
+  }
+
+  /* ---------- 生年月日セレクト ---------- */
+  function fillOpts(sel, max, label, cur){
+    var h='<option value="">'+label+'</option>';
+    for(var i=1;i<=max;i++) h+='<option value="'+i+'">'+(label==="年"&&i===1?"元":i)+label+'</option>';
+    sel.innerHTML=h; if(cur) sel.value=cur;
+  }
+  function setupBday(){
+    var yS=document.querySelector('[data-k=bdY]'), mS=document.querySelector('[data-k=bdM]'), dS=document.querySelector('[data-k=bdD]');
+    fillOpts(yS, ERA_MAX[state.bdEra]||64, "年", state.bdY);
+    fillOpts(mS,12,"月",state.bdM);
+    var b=birthDate(); var dim=31; if(b&&b.m) dim=new Date(b.Y,b.m,0).getDate();
+    fillOpts(dS, dim, "日", state.bdD);
+    var out=document.getElementById("bdayOut"), bb=birthDate();
+    if(bb){ var a=ageAt(bb, kinyuDate()); out.textContent = "西暦 "+bb.Y+"年"+(bb.m?bb.m+"月":"")+(bb.d?bb.d+"日":"")+(a!==null?"　（"+a+"歳）":""); }
+    else out.textContent="";
+  }
+
+  /* ---------- 入力バインド ---------- */
+  function bindInputs(){
+    document.querySelectorAll("#inputView [data-k]").forEach(function(el){
+      var k=el.getAttribute("data-k");
+      if(el.classList.contains("seg")){
+        var mode=el.getAttribute("data-mode");
+        el.addEventListener("click", function(ev){
+          var b=ev.target.closest("button"); if(!b) return; var v=b.getAttribute("data-v");
+          if(mode==="single"){ state[k] = (state[k]===v) ? "" : v; }
+          else{
+            var arr = Array.isArray(state[k]) ? state[k].slice() : [];
+            var i=arr.indexOf(v);
+            if(i>=0) arr.splice(i,1); else {
+              arr.push(v);
+              if(mode==="place"){ if(v==="使用なし") arr=["使用なし"]; else arr=arr.filter(function(x){return x!=="使用なし";}); }
+            }
+            state[k]=arr;
+          }
+          refreshSeg(el); refreshShows(); changed();
+        });
+      }else{
+        var ev = (el.tagName==="SELECT"||el.type==="date") ? "change" : "input";
+        el.addEventListener(ev, function(){ state[k]=el.value; if(/^bd/.test(k)||k==="kinyubi") setupBday(); changed(); });
+      }
+    });
+  }
+  function refreshSeg(el){
+    var k=el.getAttribute("data-k"), val=state[k];
+    el.querySelectorAll("button").forEach(function(b){
+      var v=b.getAttribute("data-v"), on = Array.isArray(val) ? val.indexOf(v)>=0 : val===v;
+      b.classList.toggle("on", !!on); b.setAttribute("aria-pressed", on?"true":"false");
+    });
+  }
+  function refreshShows(){
+    document.querySelectorAll("[data-show]").forEach(function(el){
+      var p=el.getAttribute("data-show").split("="), ok=p[1].split("|").indexOf(state[p[0]])>=0;
+      el.classList.toggle("hide", !ok);
+    });
+  }
+  function fillForm(){
+    document.querySelectorAll("#inputView [data-k]").forEach(function(el){
+      var k=el.getAttribute("data-k");
+      if(el.classList.contains("seg")) refreshSeg(el);
+      else if(!/^bd[YMD]$/.test(k)) el.value = state[k]||"";
+    });
+    setupBday(); refreshShows();
+  }
+  function changed(){ save(); render(); }
+
+  /* ---------- 印刷シート ---------- */
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function o(text, on){ return '<span class="o'+(on?' on':'')+'">'+text+'</span>'; }
+  function has(k,v){ var x=state[k]; return Array.isArray(x)? x.indexOf(v)>=0 : x===v; }
+  function yn(k){ return o("はい",has(k,"はい"))+"・"+o("いいえ",has(k,"いいえ")); }
+  function place(k){ return o("家の中",has(k,"家の中"))+"・"+o("外",has(k,"外"))+"・"+o("使用なし",has(k,"使用なし")); }
+  function mark(v){ return has("q3",v) ? "○" : "&nbsp;"; }
+  function side(type){
+    var cur=state.q10===type;
+    return "("+o("右",cur&&has("q10side","右"))+"・"+o("左",cur&&has("q10side","左"))+")";
+  }
+
+  function render(){
+    var kd=kinyuDate(), kw=kd?wareki(kd):null;
+    var b=birthDate(), bstr="";
+    if(state.bdEra && state.bdY){
+      bstr = state.bdEra + (state.bdY==="1"?"元":state.bdY) + "年" + (b.m? b.m+"月":"") + (b.d? b.d+"日":"");
+      var a=ageAt(b,kd); bstr += "（"+b.Y+"年生"+(a!==null?"・"+a+"歳":"")+"）";
+    }
+    var kg=state.kaigodo||"", kSup=/^要支援/.test(kg), kCare=/^要介護/.test(kg);
+    var kNum = (kSup||kCare) ? kg.slice(3) : (kg==="申請中"?"申請中":(kg==="不明"?"不明":""));
+
+    var h='';
+    h+='<div class="title">主治医意見書問診票</div>';
+    h+='<div class="hd">';
+    h+=' <div class="r"><div class="c" style="width:113mm"><span class="l" style="font-size:8.5pt">フリガナ</span><span class="v" data-fitline style="font-size:9pt">'+esc(state.furigana)+'</span></div>'
+      +'<div class="c"><span class="l">記入日：</span><span class="ymd"><span class="n" style="width:15mm">'+(kw?kw.era+kw.y:"")+'</span>年<span class="n" style="width:9mm">'+(kd?kd.getMonth()+1:"")+'</span>月<span class="n" style="width:9mm">'+(kd?kd.getDate():"")+'</span>日</span></div></div>';
+    h+=' <div class="r"><div class="c" style="width:113mm"><span class="l">患者氏名：</span><span class="v" data-fitline style="font-size:12pt">'+esc(state.shimei)+'</span></div>'
+      +'<div class="c" style="flex:1"><span class="l">記入者：</span><span class="v" data-fitline>'+esc(state.kinyusha)+'</span></div></div>';
+    h+=' <div class="r"><div class="c" style="width:113mm"><span class="l">生年月日：</span><span class="v" data-fitline>'+esc(bstr)+'</span></div>'
+      +'<div class="c" style="flex:1"><span class="l">続柄：</span><span class="v" data-fitline>'+esc(state.zokugara)+'</span></div></div>';
+    h+=' <div class="r"><div class="c"><span class="l">緊急連絡先（本人以外必ず連絡がとれる方）</span></div></div>';
+    h+=' <div class="r"><div class="c" style="width:76mm"><span class="l">氏名：</span><span class="v" data-fitline>'+esc(state.kinkyuName)+'</span></div>'
+      +'<div class="c" style="flex:1"><span class="l">住所：</span><span class="v" data-fitline>'+esc(state.kinkyuAddr)+'</span></div></div>';
+    h+=' <div class="r"><div class="c" style="flex:1"><span class="l">TEL（携帯電話）：</span><span class="v" data-fitline>'+esc(state.kinkyuTel)+'</span></div></div>';
+    h+=' <hr>';
+    h+=' <div class="r"><div class="c"><span class="l">現在の介護度：'+o("要支援",kSup)+'・'+o("要介護",kCare)+'（<span class="mk" style="min-width:12mm">'+esc(kNum)+'</span>）</span></div></div>';
+    h+=' <div class="r"><div class="c" style="width:76mm"><span class="l">事業所名；</span><span class="v" data-fitline>'+esc(state.jigyosho)+'</span></div>'
+      +'<div class="c" style="flex:1"><span class="l">ケアーマネージャーの氏名：</span><span class="v" data-fitline>'+esc(state.caremane)+'</span></div></div>';
+    h+='</div>';
+
+    h+='<div class="qs">';
+    h+='<div class="qi"><span class="num">①</span><span>現在利用中の介護サービスについて記入してください。</span></div>';
+    h+='<div class="box" data-fit style="height:15mm">'+esc(state.q1)+'</div>';
+    h+='<div class="qi"><span class="num">②</span><span>当診療所以外で通院中の病院、診療所があれば記入してください。</span></div>';
+    h+='<div class="blk">（病名、薬の内容、処置内容なども記入してください）</div>';
+    h+='<div class="box" data-fit style="height:18mm">'+esc(state.q2)+'</div>';
+    h+='<div class="qi"><span class="num">③</span><span>物忘れの状況について該当するものがあれば○を入れてください。</span></div>';
+    h+='<div class="blk">妄想（<span class="mk">'+mark("妄想")+'</span>）徘徊（<span class="mk">'+mark("徘徊")+'</span>）暴言（<span class="mk">'+mark("暴言")+'</span>）不潔行動（<span class="mk">'+mark("不潔行動")+'</span>）</div>';
+    h+='<div class="blk">火の不始末（<span class="mk">'+mark("火の不始末")+'</span>）</div>';
+    h+='<div class="blk">その他困っていることがあれば、具体的に書いてください。</div>';
+    h+='<div class="box" data-fit style="height:13mm">'+esc(state.q3other)+'</div>';
+
+    h+='<div class="qi"><span class="num">④</span><span>足腰の筋力は弱っていますか？→　'+yn("q4")+'</span></div>';
+    h+='<div class="qi"><span class="num">⑤</span><span>外出でバスや電車に一人で乗れますか？→　'+yn("q5")+'</span></div>';
+    h+='<div class="qi"><span class="num">⑥</span><span>杖やシルバーカー、車椅子などを使用している方はどこで使用していますか？</span></div>';
+    h+='<div class="dash">該当場所に○を入れてください。<br>杖（'+place("q6tsue")+'）　シルバーカー（'+place("q6silver")+'）<br>車椅子（'+place("q6chair")+'）</div>';
+    h+='<div class="qi"><span class="num">⑦</span><span>動きにくい関節、痛い関節はありますか？　→　'+yn("q7")+'</span></div>';
+    h+='<div class="blk">“はい”と答えた方はどの関節が動きにくい、痛いか書いてください。</div>';
+    h+='<div class="box" data-fit style="height:12mm">'+esc(state.q7==="はい"?state.q7text:"")+'</div>';
+    h+='<div class="qi"><span class="num">⑧</span><span>転倒、骨折歴はありますか？　→　'+yn("q8")+'</span></div>';
+    h+='<div class="blk" style="margin-left:11mm;display:flex"><span style="flex:none">手術歴は？（</span><span class="v" data-fitline style="flex:1;padding-left:1mm">'+esc(state.q8ope)+'</span><span style="flex:none">）</span></div>';
+    h+='<div class="qi"><span class="num">⑨</span><span>視力はどうですか？→'+o("見える",has("q9","見える"))+'・'+o("見えない",has("q9","見えない"))+'・'+o("見えにくい",has("q9","見えにくい"))+'</span></div>';
+    h+='<div class="blk" style="margin-left:11mm;display:flex"><span style="flex:none">手術歴は？(病名：</span><span class="v" data-fitline style="width:42mm;padding-left:1mm">'+esc(state.q9byomei)+'</span><span style="flex:none">いつ頃？：</span><span class="v" data-fitline style="width:30mm;padding-left:1mm">'+esc(state.q9itsu)+'</span><span style="flex:none">）</span></div>';
+    h+='<div class="qi"><span class="num">⑩</span><span style="white-space:nowrap;letter-spacing:-.02em">聴力はどうですか？→　'+o("聴こえる",has("q10","聴こえる"))+'・'+o("聴こえにくい",has("q10","聴こえにくい"))+side("聴こえにくい")+'・'+o("聴こえない",has("q10","聴こえない"))+side("聴こえない")+'・'+o("補聴器使用",has("q10aid","補聴器使用"))+'</span></div>';
+    h+='<div class="qi"><span class="num">⑪</span><span>食事は十分にとれますか？→　'+yn("q11")+'</span></div>';
+    h+='<div class="qi"><span class="num">⑫</span><span>食べるときにむせますか？→　'+yn("q12")+'</span></div>';
+    h+='<div class="qi"><span class="num">⑬</span><span>利き手は？→　'+o("右利き",has("q13","右利き"))+'・'+o("左利き",has("q13","左利き"))+'</span></div>';
+    h+='<div class="qi"><span class="num">⑭</span><span>他に何か介護関連で気になることはあれば記入してください。</span></div>';
+    h+='<div class="box" data-fit id="lastBox">'+esc(state.q14)+'</div>';
+    h+='</div>';
+
+    var sh=document.getElementById("sheet"); sh.innerHTML=h;
+    fitAll();
+  }
+
+  /* 文字が欄からあふれる場合はフォントを縮小 */
+  function fitAll(){
+    var sh=document.getElementById("sheet"), last=document.getElementById("lastBox");
+    if(last){ var top=last.offsetTop; last.style.height = Math.max(40, sh.clientHeight - top - 4)+"px"; }
+    sh.querySelectorAll("[data-fit]").forEach(function(el){
+      var fs=13.3; el.style.fontSize=fs+"px"; el.style.lineHeight="1.45";
+      while(el.scrollHeight > el.clientHeight+1 && fs>6.5){ fs-=0.4; el.style.fontSize=fs+"px"; if(fs<9) el.style.lineHeight="1.3"; }
+    });
+    sh.querySelectorAll("[data-fitline]").forEach(function(el){
+      var fs=parseFloat(getComputedStyle(el).fontSize)||14, min=7;
+      while(el.scrollWidth > el.clientWidth+1 && fs>min){ fs-=0.4; el.style.fontSize=fs+"px"; }
+    });
+  }
+
+  /* ---------- 画面切替・プレビュー縮尺 ---------- */
+  var view="input";
+  function scalePreview(){
+    var holder=document.getElementById("pvHolder"), wrap=document.getElementById("pvWrap");
+    var sheetPx = wrap.firstElementChild.offsetWidth, sheetH = wrap.firstElementChild.offsetHeight;
+    var avail = Math.min(document.documentElement.clientWidth - 32, 900);
+    var s = Math.min(1, avail/sheetPx);
+    wrap.style.transform="scale("+s+")"; holder.style.width=(sheetPx*s)+"px"; holder.style.height=(sheetH*s)+"px";
+  }
+  function show(v){
+    view=v;
+    document.getElementById("tabInput").classList.toggle("on", v==="input");
+    document.getElementById("tabPreview").classList.toggle("on", v==="preview");
+    document.getElementById("inputView").classList.toggle("hide", v!=="input");
+    var pv=document.getElementById("previewView"); pv.classList.toggle("offscreen", v!=="preview"); pv.setAttribute("aria-hidden", v!=="preview");
+    document.getElementById("btnPreview2").textContent = v==="input" ? "印刷イメージを確認" : "入力に戻る";
+    render(); scalePreview(); window.scrollTo(0,0);
+  }
+  function doPrint(){
+    render();
+    if(!state.shimei){ if(!confirm("患者さんのお名前が未入力です。このまま印刷しますか？")) return; }
+    setTimeout(function(){ window.print(); }, 50);
+  }
+
+  document.getElementById("tabInput").onclick=function(){show("input");};
+  document.getElementById("tabPreview").onclick=function(){show("preview");};
+  document.getElementById("btnPreview2").onclick=function(){show(view==="input"?"preview":"input");};
+  document.getElementById("btnPrint").onclick=doPrint;
+  document.getElementById("btnPrint2").onclick=doPrint;
+  document.getElementById("btnClear").onclick=function(){
+    if(!confirm("入力内容をすべて消去します。よろしいですか？（元に戻せません）")) return;
+    state={}; try{localStorage.removeItem(KEY);}catch(e){}
+    initDefaults(); fillForm(); render(); document.getElementById("savedMsg").textContent="消去しました";
+  };
+  window.addEventListener("resize", scalePreview);
+  window.addEventListener("beforeprint", render);
+
+  function initDefaults(){
+    if(!state.kinyubi){ var d=new Date(); state.kinyubi = d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2); }
+  }
+
+  load(); initDefaults(); bindInputs(); fillForm(); render(); scalePreview();
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ render(); scalePreview(); });
+})();
+</script>
+<script>if("serviceWorker" in navigator && location.protocol.indexOf("http")===0){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}</script>
+</body>
+</html>
